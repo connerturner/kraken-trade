@@ -1,10 +1,55 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      @keyframes pulse-big
+      {
+        0% {
+          box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.3);
+        }
+        100% {
+          box-shadow: 0 0 0 50px rgba(0, 0, 0, 0);
+        }
+      }
+
+      .pulse
+      {
+        animation: pulse-big 1s;
+      }
+
+      html {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+
+      #ticker {
+        color: white;
+        width: 180px;
+        height: 180px;
+        font: 18px/180px 'Barlow Semi Condensed', sans-serif;
+        text-transform: uppercase;
+        color: #fff;
+        text-align: center;
+        background: rgba(128, 0, 128);
+        border-radius: 50%;
+      }
+
+      #wrapper {
+        text-align: center;
+        padding-top: 100px;
+      }
+    </style>
   </head>
   <body>
     <button id="open">Open Socket</button>
     <button id="close">Close Socket</button>
+    <div id="wrapper">
+      <div id="ticker" class="">
+        XLM/EUR
+      </div>
+    </div>
     <script src="socket.js"></script>
   </body>
 </html>
