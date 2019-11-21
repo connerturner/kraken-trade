@@ -2,6 +2,7 @@
 
 let ws = new WebSocket("wss://ws.kraken.com");
 let channelID = "";
+let ticker = document.getElementById("ticker");
 
 ws.onopen = function(e){
   //send subscribe event
@@ -23,6 +24,9 @@ function openSocket(){
     }
   };
   ws.send(JSON.stringify(subscription));
+
+  document.getElementById("close").disabled = false;
+  document.getElementById("open").disabled = true;
 }
 
 function beep() {
@@ -30,17 +34,32 @@ function beep() {
   snd.play();
 }
 
-
 ws.onmessage = (event) => {
   console.log(event.data);
   let data = JSON.parse(event.data);
+  
+  //on try to close
+  if(data.event == "subscriptionStatus" && data.status == "unsubscribed"){
+    console.info("Socket to "+ws.url+ "closed successfully");
+    document.getElementById("close").disabled = true;
+    document.getElementById("open").disabled = false;
+  }
+
   if(!data.event){
-    channelID = event.data.channelID;
+    ticker.innerHTML = data[1][2] + " XLM ("+ new Date(data[1][0]).toLocaleTimeString() +")";
     beep();
+  } else if(data.event === "heartbeat"){
+    let el = document.getElementById("ticker");
+    if(el.classList.contains("pulse")){
+      el.classList.remove("pulse");
+      setTimeout(function(){el.classList.add("pulse")},100);
+    } else {
+      el.classList.add("pulse");
+    }
   }
 }
 
-function closeSocket(channel) {
+function closeSocket() {
   let unsubscribe = {
     "event": "unsubscribe",
     "pair": ["XLM/EUR"],
@@ -48,9 +67,6 @@ function closeSocket(channel) {
       "name": "ohlc"
     }
   };
-  if(ws.send(JSON.stringify(unsubscribe))){
-    console.info("Socket at "+ws.url+" closed");
-  } else {
-    console.warn("Error closing web socket")
-  }
+  
+  ws.send(JSON.stringify(unsubscribe));
 }
