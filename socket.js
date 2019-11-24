@@ -46,8 +46,12 @@ ws.onmessage = (event) => {
   }
 
   if(!data.event){
-    ticker.innerHTML = data[1][2] + " XLM ("+ new Date(data[1][0]).toLocaleTimeString() +")";
-    beep();
+
+    if(ticker.innerHTML !== data[1][2]){
+      beep();
+    }
+    ticker.innerHTML = data[1][2];
+    
   } else if(data.event === "heartbeat"){
     let el = document.getElementById("ticker");
     if(el.classList.contains("pulse")){
